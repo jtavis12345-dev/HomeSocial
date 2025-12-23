@@ -1,0 +1,49 @@
+openapi: 3.0.3
+info:
+  title: HomeSocial API (Phase 1)
+  version: 0.1.0
+paths:
+  /api/mux/webhook:
+    post:
+      summary: Mux webhook receiver
+      description: Receives Mux events and persists mux_asset_id/playback_id to media_assets.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: ok
+
+  /api/listings:
+    post:
+      summary: Create listing
+      responses:
+        "200":
+          description: created
+    get:
+      summary: Search listings
+      responses:
+        "200":
+          description: results
+
+  /api/listings/{id}:
+    get:
+      summary: Get single listing
+      responses:
+        "200":
+          description: item
+    patch:
+      summary: Update listing
+      responses:
+        "200":
+          description: updated
+
+  /api/admin/moderate:
+    post:
+      summary: Remove/ban action
+      responses:
+        "200":
+          description: ok

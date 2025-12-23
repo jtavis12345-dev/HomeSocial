@@ -1,0 +1,6 @@
+Epic,Title,Description,Owner,Status,Priority,Acceptance Criteria,Phase
+MVP,Auth & Profiles,Implement email/Google auth and profiles,Backend/Frontend,To Do,High,Sign in/out; profile edit works,MVP
+MVP,Listings CRUD,Create/edit/draft/publish listings,Frontend,To Do,High,Published listing appears in feed & detail,MVP
+MVP,Video Upload (Mux),Direct upload + webhook + playback,Backend,To Do,High,Video plays after processing,MVP
+MVP,Listing Detail Page,Video hero + features + CTAs,Frontend,To Do,High,LCP<2.5s; responsive,MVP
+MVP,Admin v0,Remove listing/ban user; audit log,Admin,To Do,Medium,Moderation log entries recorded,MVP
