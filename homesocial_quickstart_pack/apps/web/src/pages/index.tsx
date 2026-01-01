@@ -1,613 +1,477 @@
+import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
 
-type Listing = {
-  id: string;
-  price: number;
-  beds: number;
-  baths: number;
-  sqft: number;
-  address: string;
-  city: string;
-  state: string;
-  zip: string;
-  status: "For Sale" | "For Rent" | "Coming Soon";
-  imageUrl?: string; // placeholder for later
-};
-
-function formatPrice(n: number) {
-  return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
-}
+const demoListings = [
+  { id: "1", price: "$485,000", beds: 3, baths: 2, sqft: "1,842", address: "1247 W Camelback Rd, Phoenix, AZ", tag: "New" },
+  { id: "2", price: "$699,000", beds: 4, baths: 3, sqft: "2,610", address: "3919 E Osborn Rd, Phoenix, AZ", tag: "Open House" },
+  { id: "3", price: "$329,900", beds: 2, baths: 2, sqft: "1,105", address: "801 N 3rd St Unit 210, Phoenix, AZ", tag: "Hot" },
+];
 
 export default function Home() {
-  const [query, setQuery] = useState("");
-
-  // Temporary mock data so the UI looks real. Later: replace with Supabase fetch.
-  const listings: Listing[] = useMemo(
-    () => [
-      {
-        id: "phx-001",
-        price: 565000,
-        beds: 4,
-        baths: 3,
-        sqft: 2180,
-        address: "1847 E Meadowview Dr",
-        city: "Phoenix",
-        state: "AZ",
-        zip: "85022",
-        status: "For Sale",
-      },
-      {
-        id: "phx-002",
-        price: 389000,
-        beds: 3,
-        baths: 2,
-        sqft: 1540,
-        address: "3321 W Desert Bloom Ln",
-        city: "Phoenix",
-        state: "AZ",
-        zip: "85053",
-        status: "Coming Soon",
-      },
-      {
-        id: "phx-003",
-        price: 725000,
-        beds: 5,
-        baths: 4,
-        sqft: 2975,
-        address: "4210 N Vista Ridge Ave",
-        city: "Phoenix",
-        state: "AZ",
-        zip: "85018",
-        status: "For Sale",
-      },
-      {
-        id: "phx-004",
-        price: 2450,
-        beds: 2,
-        baths: 2,
-        sqft: 1120,
-        address: "101 W Monroe St Unit 1904",
-        city: "Phoenix",
-        state: "AZ",
-        zip: "85003",
-        status: "For Rent",
-      },
-    ],
-    []
-  );
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return listings;
-    return listings.filter((l) => {
-      const hay = `${l.address} ${l.city} ${l.state} ${l.zip} ${l.status}`.toLowerCase();
-      return hay.includes(q);
-    });
-  }, [listings, query]);
-
   return (
-    <main>
-      {/* Top Nav */}
-      <header className="nav">
-        <div className="navInner">
-          <Link href="/" className="brand">
-            <span className="logoDot" aria-hidden />
-            <span className="brandText">HomeSocial</span>
-          </Link>
+    <>
+      <Head>
+        <title>HomeSocial — Phoenix MVP</title>
+        <meta name="description" content="HomeSocial Phoenix MVP" />
+      </Head>
 
-          <nav className="navLinks">
-            <Link href="/" className="navLink">Browse</Link>
-            <Link href="/create" className="navLink">Create Listing</Link>
-          </nav>
-
-          <div className="navCta">
-            <Link href="/create" className="btnPrimary">
-              + New Listing
+      <div className="page">
+        <header className="header">
+          <div className="headerInner">
+            <Link href="/" className="brand" aria-label="HomeSocial Home">
+              <Image
+                src="/homesocial-logo.png"
+                alt="HomeSocial"
+                width={340}
+                height={90}
+                priority
+                style={{ height: "48px", width: "auto", objectFit: "contain" }}
+              />
             </Link>
-          </div>
-        </div>
-      </header>
 
-      {/* Hero */}
-      <section className="hero">
-        <div className="heroInner">
-          <div className="heroCopy">
-            <h1 className="heroTitle">Find your next place in Phoenix.</h1>
-            <p className="heroSub">
-              A clean, modern MVP to publish listings fast — with photos/video support coming next.
-            </p>
+            <nav className="nav">
+              <Link href="/" className="navLink">
+                Browse
+              </Link>
+              <Link href="/create" className="navLink">
+                Create Listing
+              </Link>
+            </nav>
 
-            <div className="searchRow">
-              <div className="searchInputWrap">
-                <span className="searchIcon" aria-hidden>⌕</span>
-                <input
-                  className="searchInput"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search by address, city, ZIP, or status…"
-                />
-              </div>
-
-              <button
-                className="btnSecondary"
-                onClick={() => {
-                  // This is just UI right now. Later we’ll wire filters / routing.
-                  const el = document.getElementById("results");
-                  el?.scrollIntoView({ behavior: "smooth", block: "start" });
-                }}
-              >
-                Search
-              </button>
-            </div>
-
-            <div className="pillRow">
-              <span className="pill">For Sale</span>
-              <span className="pill">For Rent</span>
-              <span className="pill">Coming Soon</span>
-              <span className="pill muted">No login needed to browse</span>
+            <div className="actions">
+              <Link href="/create" className="btnPrimary">
+                + New Listing
+              </Link>
             </div>
           </div>
+        </header>
 
-          <div className="heroCard" aria-label="Product preview">
-            <div className="heroCardTop">
-              <div className="heroStat">
-                <div className="heroStatLabel">Live</div>
-                <div className="heroStatValue">Vercel</div>
-              </div>
-              <div className="heroStat">
-                <div className="heroStatLabel">MVP</div>
-                <div className="heroStatValue">Phoenix</div>
-              </div>
-              <div className="heroStat">
-                <div className="heroStatLabel">Next</div>
-                <div className="heroStatValue">Supabase</div>
-              </div>
-            </div>
-            <div className="heroCardBody">
-              <div className="skeletonImg" />
-              <div className="skeletonLine wide" />
-              <div className="skeletonLine" />
-              <div className="skeletonLine" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Results */}
-      <section className="section" id="results">
-        <div className="sectionInner">
-          <div className="sectionHeader">
-            <div>
-              <h2 className="sectionTitle">Published Listings</h2>
-              <p className="sectionSub">
-                Showing <b>{filtered.length}</b> listing{filtered.length === 1 ? "" : "s"} (mock data for now).
+        <main className="main">
+          <section className="hero">
+            <div className="heroLeft">
+              <h1>
+                Find a home.
+                <br />
+                <span className="gold">Share the story.</span>
+              </h1>
+              <p className="sub">
+                A sleek, Realtor/Zillow-style browse experience — with video-first listings later (Mux),
+                and fast search + filters as we grow.
               </p>
+
+              <div className="searchCard" role="search" aria-label="Search listings">
+                <div className="searchRow">
+                  <input className="input" placeholder="City, neighborhood, address, ZIP…" />
+                  <button className="btnGold" type="button">
+                    Search
+                  </button>
+                </div>
+                <div className="chips">
+                  <button className="chip" type="button">
+                    For Sale
+                  </button>
+                  <button className="chip" type="button">
+                    Under $500k
+                  </button>
+                  <button className="chip" type="button">
+                    3+ Beds
+                  </button>
+                  <button className="chip" type="button">
+                    Pool
+                  </button>
+                </div>
+              </div>
             </div>
 
-            <Link href="/create" className="btnPrimary">
-              Create a Listing
-            </Link>
-          </div>
-
-          <div className="grid">
-            {filtered.map((l) => (
-              <article key={l.id} className="card">
-                <div className="cardMedia">
-                  <div className="mediaPlaceholder">
-                    <span className="mediaBadge">{l.status}</span>
-                    <span className="mediaHint">Photo / Video</span>
-                  </div>
+            <div className="heroRight">
+              <div className="statGrid">
+                <div className="stat">
+                  <div className="statNum">Phoenix</div>
+                  <div className="statLabel">Initial market</div>
                 </div>
+                <div className="stat">
+                  <div className="statNum">Video</div>
+                  <div className="statLabel">Mux-ready roadmap</div>
+                </div>
+                <div className="stat">
+                  <div className="statNum">Fast</div>
+                  <div className="statLabel">Next.js on Vercel</div>
+                </div>
+                <div className="stat">
+                  <div className="statNum">Social</div>
+                  <div className="statLabel">Agent + creator friendly</div>
+                </div>
+              </div>
 
-                <div className="cardBody">
-                  <div className="priceRow">
-                    <div className="price">{l.status === "For Rent" ? `${formatPrice(l.price)}/mo` : formatPrice(l.price)}</div>
-                    <div className="meta">
-                      {l.beds} bd · {l.baths} ba · {l.sqft.toLocaleString()} sqft
+              <div className="heroCard">
+                <div className="heroCardTop">
+                  <span className="pill">MVP</span>
+                  <span className="muted">Phase 1 scaffold</span>
+                </div>
+                <div className="heroCardTitle">Next Up</div>
+                <ul className="heroList">
+                  <li>Listings page (real data)</li>
+                  <li>Create Listing form → save</li>
+                  <li>Auth + roles</li>
+                  <li>Video upload + playback</li>
+                </ul>
+                <Link href="/create" className="btnPrimary full">
+                  Build a listing
+                </Link>
+              </div>
+            </div>
+          </section>
+
+          <section className="section">
+            <div className="sectionHead">
+              <h2>Featured Listings</h2>
+              <p className="muted">Sample layout (we’ll swap in real DB listings next).</p>
+            </div>
+
+            <div className="grid">
+              {demoListings.map((l) => (
+                <article key={l.id} className="card">
+                  <div className="thumb">
+                    <div className="tag">{l.tag}</div>
+                    <div className="thumbInner">
+                      <div className="thumbLogo">HS</div>
+                      <div className="thumbHint">Photo/video coming soon</div>
                     </div>
                   </div>
 
-                  <div className="address">{l.address}</div>
-                  <div className="location">
-                    {l.city}, {l.state} {l.zip}
+                  <div className="cardBody">
+                    <div className="priceRow">
+                      <div className="price">{l.price}</div>
+                      <div className="facts">
+                        {l.beds} bd • {l.baths} ba • {l.sqft} sqft
+                      </div>
+                    </div>
+                    <div className="addr">{l.address}</div>
+
+                    <div className="cardActions">
+                      <button className="btnGhost" type="button">
+                        Save
+                      </button>
+                      <button className="btnGold" type="button">
+                        View
+                      </button>
+                    </div>
                   </div>
+                </article>
+              ))}
+            </div>
+          </section>
 
-                  <div className="cardActions">
-                    <button className="btnGhost" onClick={() => alert("Next step: Listing Details page (/listings/[id])")}>
-                      View details
-                    </button>
-                    <button className="btnGhost" onClick={() => alert("Next step: Save/favorite")}>
-                      ♡ Save
-                    </button>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-
-          <div className="footerNote">
-            Next up: replace mock data with Supabase + add a real Listing Details page.
-          </div>
-        </div>
-      </section>
-
-      <footer className="footer">
-        <div className="footerInner">
-          <div className="footerBrand">
-            <span className="logoDot" aria-hidden />
-            <span className="brandText">HomeSocial</span>
-          </div>
-          <div className="footerLinks">
-            <a className="footerLink" href="#" onClick={(e) => e.preventDefault()}>
-              Privacy
-            </a>
-            <a className="footerLink" href="#" onClick={(e) => e.preventDefault()}>
-              Terms
-            </a>
-          </div>
-        </div>
-      </footer>
+          <footer className="footer">
+            <div className="footerInner">
+              <div className="muted">© {new Date().getFullYear()} HomeSocial</div>
+              <div className="muted">Phoenix MVP • Built on Vercel</div>
+            </div>
+          </footer>
+        </main>
+      </div>
 
       <style jsx>{`
         :global(html, body) {
           padding: 0;
           margin: 0;
-          background: #0b0f17;
-          color: #e9eef7;
           font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji",
             "Segoe UI Emoji";
+          background: #050505;
+          color: #f3f1ea;
+        }
+        :global(a) {
+          color: inherit;
+          text-decoration: none;
         }
 
-        main {
+        .page {
           min-height: 100vh;
+          background: radial-gradient(1200px 800px at 20% -20%, rgba(212, 175, 55, 0.18), transparent 60%),
+            radial-gradient(900px 700px at 90% 10%, rgba(212, 175, 55, 0.12), transparent 55%),
+            linear-gradient(180deg, #050505, #070707 60%, #050505);
         }
 
-        .nav {
+        .header {
           position: sticky;
           top: 0;
-          z-index: 30;
-          background: rgba(11, 15, 23, 0.72);
-          backdrop-filter: blur(14px);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          z-index: 20;
+          background: rgba(6, 6, 6, 0.65);
+          backdrop-filter: blur(10px);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
-
-        .navInner {
-          max-width: 1100px;
+        .headerInner {
+          max-width: 1200px;
           margin: 0 auto;
           padding: 14px 18px;
           display: flex;
           align-items: center;
           gap: 16px;
         }
-
         .brand {
           display: inline-flex;
           align-items: center;
-          gap: 10px;
-          text-decoration: none;
-          color: inherit;
-          font-weight: 700;
-          letter-spacing: 0.2px;
         }
-
-        .brandText {
-          font-size: 16px;
+        .nav {
+          display: flex;
+          gap: 14px;
+          margin-left: 10px;
         }
-
-        .logoDot {
-          width: 14px;
-          height: 14px;
-          border-radius: 999px;
-          background: linear-gradient(135deg, #3aa0ff, #8d5cff);
-          box-shadow: 0 0 0 3px rgba(61, 160, 255, 0.18);
-        }
-
-        .navLinks {
-          display: none;
-          gap: 12px;
-          margin-left: 6px;
-        }
-
         .navLink {
-          color: rgba(233, 238, 247, 0.82);
-          text-decoration: none;
-          font-size: 14px;
-          padding: 8px 10px;
+          padding: 10px 10px;
           border-radius: 10px;
+          color: rgba(243, 241, 234, 0.9);
         }
-
         .navLink:hover {
           background: rgba(255, 255, 255, 0.06);
-          color: #fff;
         }
-
-        .navCta {
+        .actions {
           margin-left: auto;
           display: flex;
           gap: 10px;
+          align-items: center;
         }
 
-        .btnPrimary {
-          background: linear-gradient(135deg, #3aa0ff, #8d5cff);
-          color: white;
-          border: none;
-          padding: 10px 14px;
-          border-radius: 12px;
-          text-decoration: none;
-          font-weight: 700;
-          font-size: 14px;
-          box-shadow: 0 10px 30px rgba(61, 160, 255, 0.18);
-        }
-
-        .btnPrimary:hover {
-          filter: brightness(1.05);
-        }
-
-        .btnSecondary {
-          background: rgba(255, 255, 255, 0.08);
-          color: #e9eef7;
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          padding: 12px 14px;
-          border-radius: 12px;
-          font-weight: 700;
-          cursor: pointer;
-        }
-
-        .btnSecondary:hover {
-          background: rgba(255, 255, 255, 0.12);
+        .main {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 22px 18px 60px;
         }
 
         .hero {
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-          background: radial-gradient(900px 420px at 10% 10%, rgba(61, 160, 255, 0.18), transparent 65%),
-            radial-gradient(800px 420px at 90% 20%, rgba(141, 92, 255, 0.16), transparent 60%);
-        }
-
-        .heroInner {
-          max-width: 1100px;
-          margin: 0 auto;
-          padding: 42px 18px 34px;
           display: grid;
-          grid-template-columns: 1fr;
+          grid-template-columns: 1.25fr 0.75fr;
           gap: 18px;
+          padding: 22px;
+          border: 1px solid rgba(255, 255, 255, 0.07);
+          border-radius: 18px;
+          background: rgba(12, 12, 12, 0.75);
+          box-shadow: 0 20px 80px rgba(0, 0, 0, 0.55);
         }
-
-        .heroTitle {
-          margin: 0;
-          font-size: 36px;
-          line-height: 1.12;
-          letter-spacing: -0.4px;
+        .hero h1 {
+          font-size: 44px;
+          line-height: 1.05;
+          margin: 0 0 10px;
+          letter-spacing: -0.02em;
         }
-
-        .heroSub {
-          margin: 12px 0 0;
-          color: rgba(233, 238, 247, 0.78);
-          max-width: 56ch;
+        .gold {
+          background: linear-gradient(90deg, #f7e7a7, #d4af37 55%, #f7e7a7);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+        }
+        .sub {
+          margin: 0 0 18px;
+          color: rgba(243, 241, 234, 0.75);
           font-size: 16px;
-          line-height: 1.6;
+          line-height: 1.5;
+          max-width: 680px;
         }
 
-        .searchRow {
-          margin-top: 18px;
-          display: flex;
-          gap: 10px;
-          align-items: center;
-          flex-wrap: wrap;
-        }
-
-        .searchInputWrap {
-          flex: 1;
-          min-width: 260px;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          background: rgba(255, 255, 255, 0.06);
-          border: 1px solid rgba(255, 255, 255, 0.12);
+        .searchCard {
           border-radius: 14px;
-          padding: 12px 12px;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: rgba(8, 8, 8, 0.8);
+          padding: 14px;
         }
-
-        .searchIcon {
-          opacity: 0.75;
+        .searchRow {
+          display: flex;
+          gap: 10px;
         }
-
-        .searchInput {
+        .input {
           flex: 1;
-          border: none;
+          height: 44px;
+          border-radius: 12px;
+          border: 1px solid rgba(255, 255, 255, 0.10);
+          background: rgba(0, 0, 0, 0.6);
+          color: #f3f1ea;
+          padding: 0 14px;
           outline: none;
-          background: transparent;
-          color: #e9eef7;
-          font-size: 14px;
         }
-
-        .pillRow {
-          margin-top: 12px;
+        .input:focus {
+          border-color: rgba(212, 175, 55, 0.55);
+          box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.14);
+        }
+        .chips {
           display: flex;
           flex-wrap: wrap;
           gap: 8px;
+          margin-top: 10px;
         }
-
-        .pill {
-          font-size: 12px;
+        .chip {
+          border: 1px solid rgba(255, 255, 255, 0.10);
+          background: rgba(255, 255, 255, 0.04);
+          color: rgba(243, 241, 234, 0.85);
           padding: 8px 10px;
           border-radius: 999px;
-          background: rgba(255, 255, 255, 0.06);
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          color: rgba(233, 238, 247, 0.9);
+          cursor: pointer;
+        }
+        .chip:hover {
+          border-color: rgba(212, 175, 55, 0.35);
+          background: rgba(212, 175, 55, 0.08);
         }
 
-        .pill.muted {
-          opacity: 0.75;
+        .heroRight {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
+        .statGrid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+        }
+        .stat {
+          padding: 12px;
+          border-radius: 14px;
+          border: 1px solid rgba(255, 255, 255, 0.07);
+          background: rgba(255, 255, 255, 0.03);
+        }
+        .statNum {
+          font-weight: 700;
+          letter-spacing: -0.02em;
+        }
+        .statLabel {
+          margin-top: 4px;
+          color: rgba(243, 241, 234, 0.70);
+          font-size: 12px;
         }
 
         .heroCard {
-          border-radius: 18px;
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          overflow: hidden;
-        }
-
-        .heroCardTop {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1px;
-          background: rgba(255, 255, 255, 0.08);
-        }
-
-        .heroStat {
           padding: 14px;
-          background: rgba(11, 15, 23, 0.55);
-        }
-
-        .heroStatLabel {
-          font-size: 11px;
-          color: rgba(233, 238, 247, 0.72);
-        }
-
-        .heroStatValue {
-          margin-top: 4px;
-          font-size: 14px;
-          font-weight: 800;
-        }
-
-        .heroCardBody {
-          padding: 14px;
-        }
-
-        .skeletonImg {
-          height: 120px;
           border-radius: 14px;
-          background: linear-gradient(90deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
-          background-size: 180% 100%;
-          animation: shimmer 1.6s ease-in-out infinite;
+          border: 1px solid rgba(212, 175, 55, 0.18);
+          background: linear-gradient(180deg, rgba(212, 175, 55, 0.09), rgba(10, 10, 10, 0.6));
         }
-
-        .skeletonLine {
-          height: 10px;
-          margin-top: 10px;
+        .heroCardTop {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 10px;
+        }
+        .pill {
+          font-size: 12px;
+          padding: 6px 10px;
           border-radius: 999px;
-          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(212, 175, 55, 0.35);
+          color: rgba(247, 231, 167, 0.95);
+          background: rgba(212, 175, 55, 0.08);
         }
-
-        .skeletonLine.wide {
-          width: 80%;
+        .heroCardTitle {
+          font-weight: 800;
+          margin-bottom: 8px;
         }
-
-        @keyframes shimmer {
-          0% {
-            background-position: 0% 0%;
-          }
-          100% {
-            background-position: 100% 0%;
-          }
+        .heroList {
+          margin: 0 0 12px;
+          padding-left: 18px;
+          color: rgba(243, 241, 234, 0.80);
+        }
+        .heroList li {
+          margin: 6px 0;
         }
 
         .section {
-          padding: 28px 0 40px;
+          margin-top: 22px;
         }
-
-        .sectionInner {
-          max-width: 1100px;
-          margin: 0 auto;
-          padding: 0 18px;
-        }
-
-        .sectionHeader {
+        .sectionHead {
           display: flex;
-          align-items: flex-end;
           justify-content: space-between;
-          gap: 12px;
-          flex-wrap: wrap;
-          margin-bottom: 14px;
+          align-items: flex-end;
+          gap: 14px;
+          margin: 0 0 10px;
         }
-
-        .sectionTitle {
+        .sectionHead h2 {
           margin: 0;
           font-size: 18px;
-          letter-spacing: -0.2px;
+          letter-spacing: -0.01em;
         }
-
-        .sectionSub {
-          margin: 6px 0 0;
-          color: rgba(233, 238, 247, 0.75);
+        .muted {
+          color: rgba(243, 241, 234, 0.65);
           font-size: 13px;
         }
 
         .grid {
           display: grid;
-          grid-template-columns: 1fr;
+          grid-template-columns: repeat(3, 1fr);
           gap: 14px;
         }
-
         .card {
-          border-radius: 18px;
+          border-radius: 16px;
           overflow: hidden;
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.12);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: rgba(12, 12, 12, 0.75);
+          transition: transform 0.15s ease, border-color 0.15s ease;
         }
-
-        .cardMedia {
-          height: 150px;
-          background: rgba(255, 255, 255, 0.04);
+        .card:hover {
+          transform: translateY(-2px);
+          border-color: rgba(212, 175, 55, 0.20);
         }
-
-        .mediaPlaceholder {
-          height: 100%;
-          padding: 12px;
-          display: flex;
-          align-items: flex-end;
-          justify-content: space-between;
-          background: linear-gradient(135deg, rgba(61, 160, 255, 0.18), rgba(141, 92, 255, 0.12));
+        .thumb {
+          height: 160px;
+          position: relative;
+          background: radial-gradient(500px 200px at 30% 20%, rgba(212, 175, 55, 0.22), transparent 60%),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.1));
+          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
-
-        .mediaBadge {
+        .tag {
+          position: absolute;
+          top: 12px;
+          left: 12px;
           font-size: 12px;
-          font-weight: 800;
-          padding: 7px 10px;
+          padding: 6px 10px;
           border-radius: 999px;
-          background: rgba(11, 15, 23, 0.65);
-          border: 1px solid rgba(255, 255, 255, 0.12);
+          border: 1px solid rgba(212, 175, 55, 0.35);
+          color: rgba(247, 231, 167, 0.95);
+          background: rgba(0, 0, 0, 0.35);
         }
-
-        .mediaHint {
+        .thumbInner {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+        }
+        .thumbLogo {
+          width: 44px;
+          height: 44px;
+          border-radius: 12px;
+          display: grid;
+          place-items: center;
+          font-weight: 900;
+          letter-spacing: -0.02em;
+          color: #121212;
+          background: linear-gradient(90deg, #f7e7a7, #d4af37 55%, #f7e7a7);
+          box-shadow: 0 10px 30px rgba(212, 175, 55, 0.18);
+        }
+        .thumbHint {
+          color: rgba(243, 241, 234, 0.7);
           font-size: 12px;
-          opacity: 0.85;
         }
 
         .cardBody {
-          padding: 14px;
+          padding: 12px;
         }
-
         .priceRow {
           display: flex;
-          align-items: baseline;
           justify-content: space-between;
           gap: 10px;
-          flex-wrap: wrap;
+          align-items: baseline;
         }
-
         .price {
-          font-size: 18px;
           font-weight: 900;
-          letter-spacing: -0.2px;
+          letter-spacing: -0.02em;
         }
-
-        .meta {
+        .facts {
+          color: rgba(243, 241, 234, 0.7);
           font-size: 12px;
-          color: rgba(233, 238, 247, 0.78);
         }
-
-        .address {
-          margin-top: 10px;
-          font-size: 14px;
-          font-weight: 800;
-        }
-
-        .location {
-          margin-top: 4px;
+        .addr {
+          margin-top: 6px;
+          color: rgba(243, 241, 234, 0.85);
           font-size: 13px;
-          color: rgba(233, 238, 247, 0.78);
+          line-height: 1.3;
         }
 
         .cardActions {
@@ -616,84 +480,72 @@ export default function Home() {
           gap: 10px;
         }
 
-        .btnGhost {
-          background: rgba(255, 255, 255, 0.06);
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          color: #e9eef7;
-          padding: 9px 12px;
+        .btnPrimary {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 10px 14px;
           border-radius: 12px;
+          border: 1px solid rgba(212, 175, 55, 0.22);
+          background: rgba(212, 175, 55, 0.10);
+          color: rgba(247, 231, 167, 0.95);
           font-weight: 700;
+        }
+        .btnPrimary:hover {
+          background: rgba(212, 175, 55, 0.16);
+          border-color: rgba(212, 175, 55, 0.35);
+        }
+        .btnGold {
+          height: 44px;
+          padding: 0 16px;
+          border-radius: 12px;
+          border: none;
+          cursor: pointer;
+          font-weight: 800;
+          color: #1a1300;
+          background: linear-gradient(90deg, #f7e7a7, #d4af37 55%, #f7e7a7);
+          box-shadow: 0 10px 30px rgba(212, 175, 55, 0.16);
+        }
+        .btnGold:hover {
+          filter: brightness(1.03);
+        }
+        .btnGhost {
+          flex: 1;
+          height: 40px;
+          border-radius: 12px;
+          border: 1px solid rgba(255, 255, 255, 0.10);
+          background: rgba(255, 255, 255, 0.04);
+          color: rgba(243, 241, 234, 0.9);
           cursor: pointer;
         }
-
         .btnGhost:hover {
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.06);
         }
-
-        .footerNote {
-          margin-top: 14px;
-          font-size: 12px;
-          color: rgba(233, 238, 247, 0.7);
+        .full {
+          width: 100%;
         }
 
         .footer {
+          margin-top: 26px;
+          padding-top: 18px;
           border-top: 1px solid rgba(255, 255, 255, 0.08);
-          padding: 18px 0;
-          background: rgba(255, 255, 255, 0.02);
         }
-
         .footerInner {
-          max-width: 1100px;
-          margin: 0 auto;
-          padding: 0 18px;
           display: flex;
           justify-content: space-between;
-          align-items: center;
           gap: 12px;
           flex-wrap: wrap;
         }
 
-        .footerBrand {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-
-        .footerLinks {
-          display: flex;
-          gap: 12px;
-        }
-
-        .footerLink {
-          color: rgba(233, 238, 247, 0.72);
-          text-decoration: none;
-          font-size: 13px;
-        }
-
-        .footerLink:hover {
-          color: #fff;
-        }
-
-        @media (min-width: 900px) {
-          .navLinks {
-            display: flex;
-          }
-          .heroInner {
-            grid-template-columns: 1.25fr 0.75fr;
-            align-items: start;
-            gap: 18px;
+        @media (max-width: 980px) {
+          .hero {
+            grid-template-columns: 1fr;
           }
           .grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-        }
-
-        @media (min-width: 1100px) {
-          .grid {
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: 1fr;
           }
         }
       `}</style>
-    </main>
+    </>
   );
 }
