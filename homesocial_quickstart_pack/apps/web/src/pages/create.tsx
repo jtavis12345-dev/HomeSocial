@@ -1,469 +1,380 @@
+import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
-
-type FormState = {
-  title: string;
-  price: string;
-  status: "For Sale" | "For Rent" | "Coming Soon";
-  beds: string;
-  baths: string;
-  sqft: string;
-  address: string;
-  city: string;
-  state: string;
-  zip: string;
-  description: string;
-};
+import { useState } from "react";
 
 export default function CreateListing() {
-  const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState<FormState>({
-    title: "",
-    price: "",
-    status: "For Sale",
-    beds: "",
-    baths: "",
-    sqft: "",
-    address: "",
-    city: "Phoenix",
-    state: "AZ",
-    zip: "",
-    description: "",
-  });
+  const [address, setAddress] = useState("");
+  const [price, setPrice] = useState("");
+  const [beds, setBeds] = useState("3");
+  const [baths, setBaths] = useState("2");
+  const [sqft, setSqft] = useState("");
 
-  const isValid = useMemo(() => {
-    // MVP-level validation (we’ll tighten later)
-    return (
-      form.title.trim().length >= 3 &&
-      form.price.trim().length > 0 &&
-      form.address.trim().length >= 4 &&
-      form.city.trim().length >= 2 &&
-      form.state.trim().length >= 2 &&
-      form.zip.trim().length >= 5
-    );
-  }, [form]);
-
-  async function onSubmit(e: React.FormEvent) {
+  function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!isValid) {
-      alert("Please fill in the required fields (title, price, address, city/state/zip).");
-      return;
-    }
-
-    setSaving(true);
-    try {
-      // Placeholder: next step is wiring this to Supabase insert + Mux upload flow
-      await new Promise((r) => setTimeout(r, 700));
-      alert("Saved (mock). Next: connect to Supabase + add upload.");
-      // Optionally redirect:
-      // window.location.href = "/";
-    } finally {
-      setSaving(false);
-    }
+    alert("Saved (placeholder). Next step: wire this to Supabase + Mux.");
   }
 
   return (
-    <main>
-      <header className="nav">
-        <div className="navInner">
-          <Link href="/" className="brand">
-            <span className="logoDot" aria-hidden />
-            <span className="brandText">HomeSocial</span>
-          </Link>
+    <>
+      <Head>
+        <title>Create Listing — HomeSocial</title>
+      </Head>
 
-          <div className="navLinks">
-            <Link href="/" className="navLink">Browse</Link>
+      <div className="page">
+        <header className="header">
+          <div className="headerInner">
+            <Link href="/" className="brand" aria-label="HomeSocial Home">
+              <Image
+                src="/homesocial-logo.png"
+                alt="HomeSocial"
+                width={340}
+                height={90}
+                priority
+                style={{ height: "44px", width: "auto", objectFit: "contain" }}
+              />
+            </Link>
+
+            <nav className="nav">
+              <Link href="/" className="navLink">
+                Browse
+              </Link>
+              <Link href="/create" className="navLink active">
+                Create Listing
+              </Link>
+            </nav>
+
+            <div className="actions">
+              <Link href="/" className="btnGhostLink">
+                ← Back
+              </Link>
+            </div>
+          </div>
+        </header>
+
+        <main className="main">
+          <div className="titleRow">
+            <h1>Create a Listing</h1>
+            <p className="muted">Clean layout now — we’ll add real save + video upload next.</p>
           </div>
 
-          <div className="navCta">
-            <Link href="/" className="btnSecondary">← Back</Link>
-          </div>
-        </div>
-      </header>
+          <div className="layout">
+            <form className="card" onSubmit={onSubmit}>
+              <div className="cardTitle">Listing Details</div>
 
-      <section className="wrap">
-        <div className="head">
-          <h1 className="title">Create a Listing</h1>
-          <p className="sub">
-            This is the “publisher” flow. Next we’ll connect it to Supabase and add Mux direct upload for video.
-          </p>
-        </div>
+              <label className="label">
+                Address
+                <input className="input" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="123 Main St, Phoenix, AZ" />
+              </label>
 
-        <form className="panel" onSubmit={onSubmit}>
-          <div className="grid">
-            <div className="field">
-              <label>Listing Title <span className="req">*</span></label>
-              <input
-                value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
-                placeholder="e.g., Modern Phoenix Home with Pool"
-              />
-            </div>
+              <div className="row">
+                <label className="label">
+                  Price
+                  <input className="input" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="$485,000" />
+                </label>
 
-            <div className="field">
-              <label>Status</label>
-              <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as FormState["status"] })}>
-                <option>For Sale</option>
-                <option>For Rent</option>
-                <option>Coming Soon</option>
-              </select>
-            </div>
-
-            <div className="field">
-              <label>Price <span className="req">*</span></label>
-              <input
-                value={form.price}
-                onChange={(e) => setForm({ ...form, price: e.target.value })}
-                placeholder={form.status === "For Rent" ? "e.g., 2450" : "e.g., 565000"}
-                inputMode="numeric"
-              />
-              <div className="hint">
-                {form.status === "For Rent" ? "Monthly rent amount (numbers only)" : "Sale price (numbers only)"}
+                <label className="label">
+                  Sqft
+                  <input className="input" value={sqft} onChange={(e) => setSqft(e.target.value)} placeholder="1842" />
+                </label>
               </div>
-            </div>
 
-            <div className="field">
-              <label>Beds</label>
-              <input value={form.beds} onChange={(e) => setForm({ ...form, beds: e.target.value })} placeholder="e.g., 3" inputMode="numeric" />
-            </div>
+              <div className="row">
+                <label className="label">
+                  Beds
+                  <select className="input" value={beds} onChange={(e) => setBeds(e.target.value)}>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5+</option>
+                  </select>
+                </label>
 
-            <div className="field">
-              <label>Baths</label>
-              <input value={form.baths} onChange={(e) => setForm({ ...form, baths: e.target.value })} placeholder="e.g., 2" inputMode="numeric" />
-            </div>
+                <label className="label">
+                  Baths
+                  <select className="input" value={baths} onChange={(e) => setBaths(e.target.value)}>
+                    <option value="1">1</option>
+                    <option value="1.5">1.5</option>
+                    <option value="2">2</option>
+                    <option value="2.5">2.5</option>
+                    <option value="3">3+</option>
+                  </select>
+                </label>
+              </div>
 
-            <div className="field">
-              <label>Sqft</label>
-              <input value={form.sqft} onChange={(e) => setForm({ ...form, sqft: e.target.value })} placeholder="e.g., 1540" inputMode="numeric" />
-            </div>
+              <div className="upload">
+                <div className="uploadTitle">Video / Photos</div>
+                <div className="uploadBox">
+                  <div className="goldBadge">Coming next</div>
+                  <div className="uploadText">Mux direct upload + thumbnail card</div>
+                </div>
+              </div>
+
+              <button className="btnGold" type="submit">
+                Save Listing
+              </button>
+            </form>
+
+            <aside className="side">
+              <div className="sideCard">
+                <div className="sideTitle">Roadmap (Create Flow)</div>
+                <ol className="list">
+                  <li>Save listing to DB (Supabase)</li>
+                  <li>Auth: agent/admin roles</li>
+                  <li>Mux upload → store playbackId</li>
+                  <li>Listing detail page with video player</li>
+                </ol>
+                <Link href="/" className="btnPrimary full">
+                  Back to Browse
+                </Link>
+              </div>
+
+              <div className="sideCard subtle">
+                <div className="sideTitle">Style</div>
+                <div className="muted">
+                  This page uses the HomeSocial black + gold palette to match your new logo.
+                </div>
+              </div>
+            </aside>
           </div>
-
-          <div className="divider" />
-
-          <div className="grid">
-            <div className="field span2">
-              <label>Street Address <span className="req">*</span></label>
-              <input
-                value={form.address}
-                onChange={(e) => setForm({ ...form, address: e.target.value })}
-                placeholder="e.g., 1847 E Meadowview Dr"
-              />
-            </div>
-
-            <div className="field">
-              <label>City <span className="req">*</span></label>
-              <input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
-            </div>
-
-            <div className="field">
-              <label>State <span className="req">*</span></label>
-              <input value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} maxLength={2} />
-            </div>
-
-            <div className="field">
-              <label>ZIP <span className="req">*</span></label>
-              <input value={form.zip} onChange={(e) => setForm({ ...form, zip: e.target.value })} placeholder="e.g., 85018" inputMode="numeric" />
-            </div>
-          </div>
-
-          <div className="divider" />
-
-          <div className="field">
-            <label>Description</label>
-            <textarea
-              value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
-              placeholder="Write a short, buyer-friendly description…"
-              rows={6}
-            />
-          </div>
-
-          <div className="divider" />
-
-          <div className="uploadBox">
-            <div className="uploadTitle">Media Upload (Next Step)</div>
-            <div className="uploadSub">
-              We’ll add: image gallery + Mux direct upload for video, then show them on the listing card/details page.
-            </div>
-            <button
-              type="button"
-              className="btnGhost"
-              onClick={() => alert("Next step: add Mux upload widget + store asset IDs in Supabase")}
-            >
-              Add Photos / Video (coming soon)
-            </button>
-          </div>
-
-          <div className="actions">
-            <Link href="/" className="btnSecondary">Cancel</Link>
-            <button className="btnPrimary" disabled={!isValid || saving} type="submit">
-              {saving ? "Saving…" : "Publish Listing"}
-            </button>
-          </div>
-
-          {!isValid && (
-            <div className="error">
-              Fill required fields: <b>Title</b>, <b>Price</b>, <b>Address</b>, <b>City/State/ZIP</b>.
-            </div>
-          )}
-        </form>
-      </section>
+        </main>
+      </div>
 
       <style jsx>{`
         :global(html, body) {
           padding: 0;
           margin: 0;
-          background: #0b0f17;
-          color: #e9eef7;
           font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji",
             "Segoe UI Emoji";
+          background: #050505;
+          color: #f3f1ea;
+        }
+        :global(a) {
+          color: inherit;
+          text-decoration: none;
         }
 
-        .nav {
+        .page {
+          min-height: 100vh;
+          background: radial-gradient(1100px 700px at 20% -20%, rgba(212, 175, 55, 0.18), transparent 60%),
+            linear-gradient(180deg, #050505, #070707 60%, #050505);
+        }
+
+        .header {
           position: sticky;
           top: 0;
-          z-index: 30;
-          background: rgba(11, 15, 23, 0.72);
-          backdrop-filter: blur(14px);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          z-index: 20;
+          background: rgba(6, 6, 6, 0.65);
+          backdrop-filter: blur(10px);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
-
-        .navInner {
-          max-width: 980px;
+        .headerInner {
+          max-width: 1200px;
           margin: 0 auto;
           padding: 14px 18px;
           display: flex;
           align-items: center;
           gap: 16px;
         }
-
         .brand {
           display: inline-flex;
           align-items: center;
-          gap: 10px;
-          text-decoration: none;
-          color: inherit;
-          font-weight: 700;
-          letter-spacing: 0.2px;
         }
-
-        .brandText {
-          font-size: 16px;
+        .nav {
+          display: flex;
+          gap: 14px;
+          margin-left: 10px;
         }
-
-        .logoDot {
-          width: 14px;
-          height: 14px;
-          border-radius: 999px;
-          background: linear-gradient(135deg, #3aa0ff, #8d5cff);
-          box-shadow: 0 0 0 3px rgba(61, 160, 255, 0.18);
-        }
-
-        .navLinks {
-          margin-left: 8px;
-        }
-
         .navLink {
-          color: rgba(233, 238, 247, 0.82);
-          text-decoration: none;
-          font-size: 14px;
-          padding: 8px 10px;
+          padding: 10px 10px;
           border-radius: 10px;
+          color: rgba(243, 241, 234, 0.9);
         }
-
         .navLink:hover {
           background: rgba(255, 255, 255, 0.06);
-          color: #fff;
+        }
+        .active {
+          border: 1px solid rgba(212, 175, 55, 0.22);
+          background: rgba(212, 175, 55, 0.08);
+        }
+        .actions {
+          margin-left: auto;
         }
 
-        .navCta {
-          margin-left: auto;
+        .main {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 22px 18px 60px;
+        }
+
+        .titleRow h1 {
+          margin: 0;
+          font-size: 34px;
+          letter-spacing: -0.02em;
+        }
+        .muted {
+          color: rgba(243, 241, 234, 0.65);
+          font-size: 13px;
+          margin-top: 6px;
+        }
+
+        .layout {
+          margin-top: 14px;
+          display: grid;
+          grid-template-columns: 1fr 0.8fr;
+          gap: 14px;
+          align-items: start;
+        }
+
+        .card {
+          border-radius: 16px;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: rgba(12, 12, 12, 0.75);
+          padding: 16px;
+          box-shadow: 0 20px 80px rgba(0, 0, 0, 0.55);
+        }
+        .cardTitle {
+          font-weight: 900;
+          letter-spacing: -0.02em;
+          margin-bottom: 12px;
+        }
+
+        .label {
           display: flex;
+          flex-direction: column;
+          gap: 8px;
+          margin-bottom: 12px;
+          color: rgba(243, 241, 234, 0.85);
+          font-size: 13px;
+        }
+        .row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
           gap: 10px;
         }
-
-        .wrap {
-          max-width: 980px;
-          margin: 0 auto;
-          padding: 28px 18px 60px;
+        .input {
+          height: 44px;
+          border-radius: 12px;
+          border: 1px solid rgba(255, 255, 255, 0.10);
+          background: rgba(0, 0, 0, 0.6);
+          color: #f3f1ea;
+          padding: 0 14px;
+          outline: none;
+        }
+        .input:focus {
+          border-color: rgba(212, 175, 55, 0.55);
+          box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.14);
         }
 
-        .head {
-          margin-bottom: 14px;
+        .upload {
+          margin: 12px 0 14px;
+        }
+        .uploadTitle {
+          font-weight: 800;
+          margin-bottom: 8px;
+        }
+        .uploadBox {
+          border-radius: 14px;
+          border: 1px dashed rgba(212, 175, 55, 0.35);
+          background: rgba(212, 175, 55, 0.06);
+          padding: 14px;
+        }
+        .goldBadge {
+          display: inline-block;
+          font-size: 12px;
+          padding: 6px 10px;
+          border-radius: 999px;
+          color: rgba(247, 231, 167, 0.95);
+          border: 1px solid rgba(212, 175, 55, 0.35);
+          background: rgba(0, 0, 0, 0.25);
+          margin-bottom: 8px;
+        }
+        .uploadText {
+          color: rgba(243, 241, 234, 0.75);
+          font-size: 13px;
         }
 
-        .title {
-          margin: 0;
-          font-size: 26px;
-          letter-spacing: -0.2px;
+        .side {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
         }
-
-        .sub {
-          margin: 8px 0 0;
-          color: rgba(233, 238, 247, 0.75);
-          line-height: 1.6;
-          max-width: 70ch;
-          font-size: 14px;
-        }
-
-        .panel {
-          border-radius: 18px;
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.12);
+        .sideCard {
+          border-radius: 16px;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: rgba(12, 12, 12, 0.75);
           padding: 16px;
         }
-
-        .grid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 12px;
+        .subtle {
+          background: rgba(255, 255, 255, 0.03);
         }
-
-        .field label {
-          display: block;
-          font-size: 12px;
-          color: rgba(233, 238, 247, 0.78);
-          margin-bottom: 6px;
-          font-weight: 700;
-        }
-
-        .req {
-          color: #ff7a7a;
-        }
-
-        input,
-        select,
-        textarea {
-          width: 100%;
-          box-sizing: border-box;
-          background: rgba(255, 255, 255, 0.06);
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          border-radius: 12px;
-          padding: 12px 12px;
-          color: #e9eef7;
-          outline: none;
-          font-size: 14px;
-        }
-
-        textarea {
-          resize: vertical;
-        }
-
-        input:focus,
-        select:focus,
-        textarea:focus {
-          border-color: rgba(61, 160, 255, 0.7);
-          box-shadow: 0 0 0 3px rgba(61, 160, 255, 0.18);
-        }
-
-        .hint {
-          margin-top: 6px;
-          font-size: 12px;
-          color: rgba(233, 238, 247, 0.65);
-        }
-
-        .divider {
-          height: 1px;
-          background: rgba(255, 255, 255, 0.08);
-          margin: 14px 0;
-        }
-
-        .uploadBox {
-          border-radius: 16px;
-          padding: 14px;
-          background: radial-gradient(900px 420px at 10% 10%, rgba(61, 160, 255, 0.12), transparent 65%),
-            rgba(255, 255, 255, 0.04);
-          border: 1px solid rgba(255, 255, 255, 0.12);
-        }
-
-        .uploadTitle {
+        .sideTitle {
           font-weight: 900;
-          letter-spacing: -0.1px;
+          letter-spacing: -0.02em;
+          margin-bottom: 10px;
+        }
+        .list {
+          margin: 0 0 12px;
+          padding-left: 18px;
+          color: rgba(243, 241, 234, 0.80);
+        }
+        .list li {
+          margin: 6px 0;
         }
 
-        .uploadSub {
-          margin-top: 6px;
-          color: rgba(233, 238, 247, 0.72);
-          font-size: 13px;
-          line-height: 1.55;
-        }
-
-        .actions {
-          margin-top: 14px;
-          display: flex;
-          justify-content: flex-end;
-          gap: 10px;
-          flex-wrap: wrap;
-        }
-
-        .btnPrimary {
-          background: linear-gradient(135deg, #3aa0ff, #8d5cff);
-          color: white;
+        .btnGold {
+          height: 44px;
+          width: 100%;
+          border-radius: 12px;
           border: none;
+          cursor: pointer;
+          font-weight: 900;
+          color: #1a1300;
+          background: linear-gradient(90deg, #f7e7a7, #d4af37 55%, #f7e7a7);
+          box-shadow: 0 10px 30px rgba(212, 175, 55, 0.16);
+        }
+        .btnGold:hover {
+          filter: brightness(1.03);
+        }
+        .btnPrimary {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
           padding: 10px 14px;
           border-radius: 12px;
-          text-decoration: none;
+          border: 1px solid rgba(212, 175, 55, 0.22);
+          background: rgba(212, 175, 55, 0.10);
+          color: rgba(247, 231, 167, 0.95);
           font-weight: 800;
-          font-size: 14px;
-          cursor: pointer;
-          box-shadow: 0 10px 30px rgba(61, 160, 255, 0.18);
         }
-
-        .btnPrimary:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-          box-shadow: none;
+        .btnPrimary:hover {
+          background: rgba(212, 175, 55, 0.16);
+          border-color: rgba(212, 175, 55, 0.35);
         }
-
-        .btnSecondary {
-          background: rgba(255, 255, 255, 0.08);
-          color: #e9eef7;
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          padding: 10px 14px;
-          border-radius: 12px;
-          font-weight: 800;
-          text-decoration: none;
-          cursor: pointer;
-        }
-
-        .btnSecondary:hover {
-          background: rgba(255, 255, 255, 0.12);
-        }
-
-        .btnGhost {
-          margin-top: 10px;
-          background: rgba(255, 255, 255, 0.06);
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          color: #e9eef7;
+        .btnGhostLink {
           padding: 10px 12px;
           border-radius: 12px;
-          font-weight: 800;
-          cursor: pointer;
+          border: 1px solid rgba(255, 255, 255, 0.10);
+          background: rgba(255, 255, 255, 0.04);
+          color: rgba(243, 241, 234, 0.9);
+        }
+        .btnGhostLink:hover {
+          background: rgba(255, 255, 255, 0.06);
+        }
+        .full {
+          width: 100%;
         }
 
-        .btnGhost:hover {
-          background: rgba(255, 255, 255, 0.1);
-        }
-
-        .error {
-          margin-top: 12px;
-          font-size: 12px;
-          color: rgba(255, 122, 122, 0.92);
-        }
-
-        .span2 {
-          grid-column: span 1;
-        }
-
-        @media (min-width: 900px) {
-          .grid {
-            grid-template-columns: repeat(3, 1fr);
+        @media (max-width: 980px) {
+          .layout {
+            grid-template-columns: 1fr;
           }
-          .span2 {
-            grid-column: span 2;
+          .row {
+            grid-template-columns: 1fr;
           }
         }
       `}</style>
-    </main>
+    </>
   );
 }
